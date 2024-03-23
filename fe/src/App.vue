@@ -33,7 +33,9 @@ async function loginHandler() {
 
 async function getAHandler() {
   try {
-    const responseData = await axiosInstance.get("/");
+    const responseData = await axiosInstance.get("/", {
+      cancelPreviousRequests: true,
+    });
 
     console.log(responseData);
   } catch (error) {
@@ -50,6 +52,8 @@ async function getBHandler() {
     console.error(error);
   }
 }
+
+async function cancelRequestHandler() {}
 </script>
 
 <style scoped>

@@ -99,13 +99,13 @@ app.post("/auth/refresh", jwtRefreshTokenValidate, (req, res) => {
 
   const catIdx = cats.findIndex((e) => e.refresh === req.user.token);
 
+  console.log(req.user);
+
   if (!cat || catIdx < 0) return res.sendStatus(401);
 
   const access_token = jwtGenerate(cat);
   const refresh_token = jwtRefreshTokenGenerate(cat);
-  console.log(catIdx);
   cats[catIdx].refresh = refresh_token;
-  console.log(cats);
 
   return setTimeout(
     () =>
