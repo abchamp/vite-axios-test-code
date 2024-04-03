@@ -1,8 +1,13 @@
 import { createApp } from "vue";
 import "./style.css";
 import App from "./App.vue";
-import setupInterceptors from "./axois-setup-interceptors";
+import { createPinia } from "pinia";
+import setupAxiosInterceptors from "./axois-setup-interceptors";
 
-setupInterceptors();
+const pinia = createPinia();
+const app = createApp(App);
 
-createApp(App).mount("#app");
+app.use(pinia);
+const setupAxiosInstance = setupAxiosInterceptors();
+app.provide("$appAxios", setupAxiosInstance);
+app.mount("#app");

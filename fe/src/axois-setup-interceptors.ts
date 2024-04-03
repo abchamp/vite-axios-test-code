@@ -3,10 +3,12 @@ import axios from "axios";
 import { AxiosRequestConfig } from "axios";
 import { Buffer } from "buffer/";
 
+import { useCounterStore } from "./store/counter";
+
 const APP_AXIOS_ENV_VAR = {
   refreshTokenURI: "/auth/refresh",
   unAuthUri: ["/auth/login"],
-  checkBeforeTokenExpire: true,
+  checkBeforeTokenExpire: false,
 };
 
 interface RetryQueueItem {
@@ -16,6 +18,9 @@ interface RetryQueueItem {
 }
 
 const setup = () => {
+  const counterStore = useCounterStore();
+  // const apiManage = new ApiManager();
+
   const refreshAndRetryQueue: RetryQueueItem[] = [];
   let isRefreshing = false;
   let pendingRequests: any = {};
@@ -31,8 +36,6 @@ const setup = () => {
 
     if (expTimestamp) {
       const currentTimestamp = Date.now() / 1000;
-      console.log(expTimestamp - beforeExpire > currentTimestamp);
-      console.log(currentTimestamp, expTimestamp);
       if (expTimestamp - beforeExpire > currentTimestamp) {
         return false;
       } else {
@@ -65,6 +68,7 @@ const setup = () => {
   };
 
   const removePendingRequest = (url: string, abort: boolean = false) => {
+    console.log(counterStore.doubleCount);
     if (url && pendingRequests[url]) {
       if (abort) {
         pendingRequests[url].abort();
@@ -81,7 +85,6 @@ const setup = () => {
 
     if (config?.cancelPreviousRequests && config?.url && !config.signal) {
       checkPendingRequest(config);
-      console.log("in cancel");
       const abortController = new AbortController();
       config.signal = abortController.signal;
       if (config?.requestGroup) {
@@ -145,8 +148,6 @@ const setup = () => {
         });
       }
     }
-
-    console.log("in");
 
     return config;
   };
@@ -223,6 +224,10 @@ const setup = () => {
     },
     async (error) => postResponseHandler(error)
   );
+
+  return {
+    cancelAxiosToken: removePendingRequest,
+  };
 };
 
 export default setup;

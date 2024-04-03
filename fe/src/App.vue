@@ -12,11 +12,19 @@
   <button @click="loginHandler">Login</button>
   <button @click="getAHandler">Get A</button>
   <button @click="getBHandler">Get B</button>
+
+  <br />
+  <button @click="counterToStore">Counter Store</button>
+  <HelloB />
 </template>
 
 <script setup lang="ts">
 import HelloWorld from "./components/HelloWorld.vue";
+import HelloB from "./components/HelloB.vue";
 import axiosInstance from "./axois-instance";
+import { useCounterStore } from "./store/counter";
+
+const couterStore = useCounterStore();
 
 async function loginHandler() {
   try {
@@ -54,6 +62,10 @@ async function getBHandler() {
 }
 
 async function cancelRequestHandler() {}
+
+async function counterToStore() {
+  couterStore.increment();
+}
 </script>
 
 <style scoped>
